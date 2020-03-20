@@ -33,8 +33,9 @@ function questions() {
         .then(answers => {
             //log product and quantity
             console.log(answers.id)
-            console.log(answers.qty)
-
+            console.log(answers.qty);
+            // let order = { productId: answers.id, orderQty: answers.qty };
+            // console.log(order)
             readProducts();
             //check db for qty and remove or error insufficient qty, and stop purchase.
             //return readProducts();
@@ -63,8 +64,9 @@ function afterConnection() {
 
 function readProducts() {
     console.log("readProducts() is connected");
+
     connection.query("SELECT STOCK_QUANTITY FROM PRODUCTS where ITEM_ID is ?", [{
-            ITEM_ID: answers.id
+            ITEM_ID:
         }],
         function qtyCheck() {
             if (ITEM_ID < answers.qty) {
