@@ -81,12 +81,45 @@ function readProducts(ITEM_ID, answers) {
 function qtyCheck(stockqty, answers) {
     if (stockqty < answers.qty) {
         console.log("Items are backordered, please reduce your quantity request.")
+        questions();
     } else {
-        //updateProduct()
+        updateProduct(stockqty, answers)
     }
-    connection.end();
 };
 
+
+function updateProduct(stockqty, answers) {
+    console.log("Updating product...\n");
+    var query = connection.query(
+        "UPDATE products SET ? WHERE ?", [{
+                STOCK_QUANTITY: stockqty - answers.qty
+            },
+            {
+                ITEM_ID: answers.id
+            }
+        ],
+
+    );
+    // logs the actual query being run
+    console.log(query.sql);
+    //buy more items?
+    inquirer
+        .prompt([{
+            name: "more",
+            type: "confirm",
+            message: "Would you like to buy more items?",
+            default: false
+        }])
+        .then(answers => {
+            if (answers = true) {
+                questions();
+
+            } else {
+                console.log("Thanks for supporting your small, local black market!");
+                connection.end();
+            }
+        });
+};
 
 // function createProduct() {
 //     console.log("Adding a new product...\n");
