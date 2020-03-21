@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer")
+var confirm = require('inquirer-confirm');
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -103,77 +104,12 @@ function updateProduct(stockqty, answers) {
     // logs the actual query being run
     console.log(query.sql);
     //buy more items?
-    inquirer
-        .prompt([{
-            name: "more",
-            type: "confirm",
-            message: "Would you like to buy more items?",
-            default: false
-        }])
-        .then(answers => {
-            if (answers = true) {
-                questions();
-
-            } else {
-                console.log("Thanks for supporting your small, local black market!");
-                connection.end();
-            }
+    confirm("Would you like to buy more items?")
+        .then(function confirmed() {
+            questions();
+        }, function cancelled() {
+            console.log("Thanks for supporting your small, local black market!");
+            connection.end();
         });
+
 };
-
-// function createProduct() {
-//     console.log("Adding a new product...\n");
-//     var query = connection.query(
-//         "INSERT INTO products SET ?", {
-//             PRODUCT_NAME: "THERMO-EXTREME PROTECTANT SPRAY",
-//             DEPARTMENT_NAME: "BIO-ENHANCEMENT",
-//             PRICE: 54,
-//             STOCK_QUANTITY: 358
-//         },
-//         function(err, res) {
-//             if (err) throw err;
-//             console.log(res.affectedRows + " product inserted!\n");
-//             // Call updateProduct AFTER the INSERT completes
-//             updateProduct();
-//         }
-//     );
-
-// logs the actual query being run
-// console.log(query.sql);
-// }
-
-// function updateProduct() {
-//     console.log("Updating product...\n");
-//     var query = connection.query(
-//         "UPDATE products SET ? WHERE ?", [{
-//                 quantity: 100
-//             },
-//             {
-//                 PRODUCT: "EXO-SKELETON"
-//             }
-//         ],
-//         function(err, res) {
-//             if (err) throw err;
-//             console.log(res.affectedRows + " products updated!\n");
-//             // Call deleteProduct AFTER the UPDATE completes
-//             deleteProduct();
-//         }
-//     );
-//     // logs the actual query being run
-//     console.log(query.sql);
-// }
-
-// function deleteProduct() {
-//     console.log("Deleting all strawberry icecream...\n");
-//     connection.query(
-//         "DELETE FROM products WHERE ?", {
-//             PRODUCT: "INVISI-CLOAK"
-//         },
-//         function(err, res) {
-//             if (err) throw err;
-//             console.log(res.affectedRows + " products deleted!\n");
-//             // Call readProducts AFTER the DELETE completes
-//             readProducts();
-//         }
-//     );
-// }
