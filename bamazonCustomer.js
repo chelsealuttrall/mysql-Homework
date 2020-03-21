@@ -33,10 +33,11 @@ function questions() {
         .then(answers => {
             //log product and quantity
             console.log(answers.id)
+            ITEM_ID = answers.id;
             console.log(answers.qty);
             // let order = { productId: answers.id, orderQty: answers.qty };
             // console.log(order)
-            readProducts();
+            readProducts(ITEM_ID, answers);
             //check db for qty and remove or error insufficient qty, and stop purchase.
             //return readProducts();
             //show total cost of purchase.
@@ -57,31 +58,35 @@ function afterConnection() {
         if (err) throw err;
         console.table(res)
         questions();
-        connection.end();
+
     });
 }
 
 
-function readProducts() {
+
+function readProducts(ITEM_ID, answers) {
     console.log("readProducts() is connected");
+    console.log("item id is:", ITEM_ID)
+    connection.query("SELECT * FROM PRODUCTS WHERE ITEM_ID = ?", [ITEM_ID], function(err, res) {
+        if (err) throw err;
+        console.log(res[0].STOCK_QUANTITY);
+        let stockqty = res[0].STOCK_QUANTITY
+        qtyCheck(stockqty, answers);
+    });
 
-    connection.query("SELECT STOCK_QUANTITY FROM PRODUCTS where ITEM_ID is ?", [{
-            ITEM_ID:
-        }],
-        function qtyCheck() {
-            if (ITEM_ID < answers.qty) {
-                console.log("Items are backordered, please reduce your quantity request.")
-            } else {
-                updateProduct()
-            }
-        },
-        function(err, res) {
-            if (err) throw err;
-            // Log all results of the SELECT statement
-            console.log(res);
 
-        });
-}
+
+};
+
+function qtyCheck(stockqty, answers) {
+    if (stockqty < answers.qty) {
+        console.log("Items are backordered, please reduce your quantity request.")
+    } else {
+        //updateProduct()
+    }
+    connection.end();
+};
+
 
 // function createProduct() {
 //     console.log("Adding a new product...\n");
