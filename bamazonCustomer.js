@@ -5,7 +5,7 @@ var confirm = require('inquirer-confirm');
 var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
-    user: "root",
+    user: "Student.Me",
     password: "d@GGer1217",
     database: "BAMAZON_DB"
 });
